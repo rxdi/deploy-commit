@@ -1,0 +1,9 @@
+query listTransactions($status: TransactionsTypeEnum, $repoFolder: String!) {
+  listTransactions(status: $status, repoFolder: $repoFolder) {
+    _id
+    status
+    birthtime
+    path
+    repoFolder
+  }
+}

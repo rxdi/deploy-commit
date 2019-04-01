@@ -1,0 +1,14 @@
+config:
+  app:
+    local:
+      NODE_ENV: development
+  test: 
+    local: extends app/local
+
+  schema:
+    introspectionEndpoint: http://localhost:9000/graphql
+    introspectionOutputFolder: ./src/app/core/api-introspection
+
+commands:
+  i:
+    i: npm run generate:schema && rm -rf ./src/app/core/api-introspection/documents.json

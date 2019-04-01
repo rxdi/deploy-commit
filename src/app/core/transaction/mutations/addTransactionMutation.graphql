@@ -1,0 +1,8 @@
+mutation addTransaction($path: String!, $birthtime: String!, $repoFolder: String!) {
+  addTransaction(path: $path, birthtime: $birthtime, repoFolder: $repoFolder) {
+    _id
+    status
+    path
+    birthtime
+  }
+}
