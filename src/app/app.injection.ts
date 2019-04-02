@@ -12,7 +12,11 @@ export const PACKAGE_JSON = new InjectionToken<string>(
 
 export interface REACTIVE_JSON {
   main: string;
+  name: string;
 }
+
+
+export interface PACKAGE_JSON extends REACTIVE_JSON {}
 
 
 export type COMMAND_PARSER = string[];

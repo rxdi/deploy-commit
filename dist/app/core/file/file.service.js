@@ -26,7 +26,7 @@ let FileService = class FileService {
         this.results = [];
     }
     read(name) {
-        let file;
+        let file = "{}";
         try {
             file = fs_1.readFileSync(`${process.cwd()}/${name}`, {
                 encoding: "utf-8"
@@ -100,7 +100,7 @@ let FileService = class FileService {
     }
     map(res) {
         return __awaiter(this, void 0, void 0, function* () {
-            let foldersCount = 100;
+            const foldersCount = 100;
             let counter = 0;
             return (yield Promise.all(res.map((r) => __awaiter(this, void 0, void 0, function* () {
                 counter++;

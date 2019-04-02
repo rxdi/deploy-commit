@@ -18,6 +18,7 @@ export type addTransactionMutationVariables = {
   path: string,
   birthtime: string,
   repoFolder: string,
+  namespace: string,
 };
 
 export type addTransactionMutation = {
@@ -26,6 +27,7 @@ export type addTransactionMutation = {
     status: TransactionsTypeEnum | null,
     path: string | null,
     birthtime: string | null,
+    namespace: string | null,
   } | null,
 };
 
@@ -40,6 +42,7 @@ export type checkoutTransactionMutation = {
     status: TransactionsTypeEnum | null,
     birthtime: string | null,
     path: string | null,
+    namespace: string | null,
   } | null,
 };
 
@@ -56,6 +59,7 @@ export type commitTransactionMutation = {
     path: string | null,
     repoFolder: string | null,
     message: string | null,
+    namespace: string | null,
   } | null,
 };
 
@@ -71,6 +75,7 @@ export type pushTransactionMutationMutation = {
     path: string | null,
     repoFolder: string | null,
     message: string | null,
+    namespace: string | null,
   } | null,
 };
 
@@ -86,6 +91,8 @@ export type listTransactionsQuery = {
     birthtime: string | null,
     path: string | null,
     repoFolder: string | null,
+    message: string | null,
+    namespace: string | null,
   } | null > | null,
 };
 /* tslint:enable */

@@ -13,7 +13,7 @@ import { map, tap } from "rxjs/operators";
 import { FileService } from "../file/file.service";
 import { Stats } from "fs";
 import { addTransactionMutationVariables } from "../api-introspection/operation-result-types";
-import { REACTIVE_JSON, COMMAND_PARSER } from "../../app.injection";
+import { REACTIVE_JSON, COMMAND_PARSER, PACKAGE_JSON } from "../../app.injection";
 
 @Injectable()
 export class TransactionService {
@@ -24,6 +24,7 @@ export class TransactionService {
     private spinner: SpinnerService,
     private fileService: FileService,
     @Inject(REACTIVE_JSON) private reactiveJson: REACTIVE_JSON,
+    @Inject(PACKAGE_JSON) private packageJson: PACKAGE_JSON,
     @Inject(COMMAND_PARSER) private command: COMMAND_PARSER
   ) {
     this.path = this.reactiveJson.main || this.command[1];
@@ -58,9 +59,8 @@ export class TransactionService {
     let res: ITransactionType = {} as any;
     try {
       res = await this.graphService
-        .request<IMutation>("addTransactionMutation.graphql", <
-          addTransactionMutationVariables
-        >{
+        .request<IMutation>("addTransactionMutation.graphql", <addTransactionMutationVariables>{
+          namespace: this.reactiveJson.name || this.packageJson.name,
           birthtime: file.birthtime.toISOString(),
           path: this.path,
           repoFolder: process.cwd()

@@ -4,5 +4,6 @@ mutation checkoutTransaction($path: String!, $repoFolder: String!) {
     status
     birthtime
     path
+    namespace
   }
 }

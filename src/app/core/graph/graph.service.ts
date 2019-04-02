@@ -8,7 +8,7 @@ import { DocumentTypes } from "../api-introspection/documentTypes";
 export class GraphService {
   request<T>(query: DocumentTypes, variables: any = {}): Observable<T> {
     return from(
-      request<T>("http://localhost:9000/graphql", importQuery(query), variables)
+      request<T>("http://localhost:9300/graphql", importQuery(query), variables)
     );
   }
 }

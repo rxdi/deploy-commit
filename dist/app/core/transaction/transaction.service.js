@@ -29,12 +29,13 @@ const operators_1 = require("rxjs/operators");
 const file_service_1 = require("../file/file.service");
 const app_injection_1 = require("../../app.injection");
 let TransactionService = class TransactionService {
-    constructor(graphService, tLogger, spinner, fileService, reactiveJson, command) {
+    constructor(graphService, tLogger, spinner, fileService, reactiveJson, packageJson, command) {
         this.graphService = graphService;
         this.tLogger = tLogger;
         this.spinner = spinner;
         this.fileService = fileService;
         this.reactiveJson = reactiveJson;
+        this.packageJson = packageJson;
         this.command = command;
         this.addTransaction = () => __awaiter(this, void 0, void 0, function* () {
             this.spinner.start(`Adding ${this.path} to transaction...`);
@@ -54,6 +55,7 @@ let TransactionService = class TransactionService {
             try {
                 res = yield this.graphService
                     .request("addTransactionMutation.graphql", {
+                    namespace: this.reactiveJson.name || this.packageJson.name,
                     birthtime: file.birthtime.toISOString(),
                     path: this.path,
                     repoFolder: process.cwd()
@@ -188,11 +190,12 @@ let TransactionService = class TransactionService {
 TransactionService = __decorate([
     core_1.Injectable(),
     __param(4, core_1.Inject(app_injection_1.REACTIVE_JSON)),
-    __param(5, core_1.Inject(app_injection_1.COMMAND_PARSER)),
+    __param(5, core_1.Inject(app_injection_1.PACKAGE_JSON)),
+    __param(6, core_1.Inject(app_injection_1.COMMAND_PARSER)),
     __metadata("design:paramtypes", [graph_service_1.GraphService,
         logger_service_1.LoggerService,
         spinner_service_1.SpinnerService,
-        file_service_1.FileService, Object, Array])
+        file_service_1.FileService, Object, Object, Array])
 ], TransactionService);
 exports.TransactionService = TransactionService;
 //# sourceMappingURL=transaction.service.js.map

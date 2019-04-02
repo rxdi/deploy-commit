@@ -12,7 +12,7 @@ const graphql_request_1 = require("graphql-request");
 const graphql_helpers_1 = require("../api-introspection/graphql-helpers");
 let GraphService = class GraphService {
     request(query, variables = {}) {
-        return rxjs_1.from(graphql_request_1.default("http://localhost:9000/graphql", graphql_helpers_1.importQuery(query), variables));
+        return rxjs_1.from(graphql_request_1.default("http://localhost:9300/graphql", graphql_helpers_1.importQuery(query), variables));
     }
 };
 GraphService = __decorate([

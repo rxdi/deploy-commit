@@ -20,7 +20,7 @@ let LoggerService = class LoggerService {
         console.log(table.toString());
         console.log(chalk `
 There are {green.bold ${t.filter(t => t.status === "DEPLOYED").length} deployed} transactions.
-There are {red.bold ${t.filter(t => t.status !== "DEPLOYED").length} uncommited} transactions.
+There are {red.bold ${t.filter(t => t.status !== "DEPLOYED").length} undeployed} transactions.
         `);
     }
 };

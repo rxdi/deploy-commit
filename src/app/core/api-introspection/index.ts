@@ -156,6 +156,7 @@ export
     birthtime: string | null;
     path: string | null;
     repoFolder: string | null;
+    namespace: string | null;
     message: string | null;
 }
 

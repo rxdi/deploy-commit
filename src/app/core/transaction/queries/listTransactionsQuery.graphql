@@ -5,5 +5,7 @@ query listTransactions($status: TransactionsTypeEnum, $repoFolder: String!) {
     birthtime
     path
     repoFolder
+    message
+    namespace
   }
 }

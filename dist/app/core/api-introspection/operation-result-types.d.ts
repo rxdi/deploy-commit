@@ -8,6 +8,7 @@ export declare type addTransactionMutationVariables = {
     path: string;
     birthtime: string;
     repoFolder: string;
+    namespace: string;
 };
 export declare type addTransactionMutation = {
     addTransaction: {
@@ -15,6 +16,7 @@ export declare type addTransactionMutation = {
         status: TransactionsTypeEnum | null;
         path: string | null;
         birthtime: string | null;
+        namespace: string | null;
     } | null;
 };
 export declare type checkoutTransactionMutationVariables = {
@@ -27,6 +29,7 @@ export declare type checkoutTransactionMutation = {
         status: TransactionsTypeEnum | null;
         birthtime: string | null;
         path: string | null;
+        namespace: string | null;
     } | null;
 };
 export declare type commitTransactionMutationVariables = {
@@ -41,6 +44,7 @@ export declare type commitTransactionMutation = {
         path: string | null;
         repoFolder: string | null;
         message: string | null;
+        namespace: string | null;
     } | null;
 };
 export declare type pushTransactionMutationMutationVariables = {
@@ -54,6 +58,7 @@ export declare type pushTransactionMutationMutation = {
         path: string | null;
         repoFolder: string | null;
         message: string | null;
+        namespace: string | null;
     } | null;
 };
 export declare type listTransactionsQueryVariables = {

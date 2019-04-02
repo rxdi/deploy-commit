@@ -1,3 +1,4 @@
 {
+    "name": "@rxdi/deploy-commit",
     "main": "./src/main.ts"
 }

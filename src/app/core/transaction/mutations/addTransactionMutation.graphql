@@ -1,8 +1,9 @@
-mutation addTransaction($path: String!, $birthtime: String!, $repoFolder: String!) {
-  addTransaction(path: $path, birthtime: $birthtime, repoFolder: $repoFolder) {
+mutation addTransaction($path: String!, $birthtime: String!, $repoFolder: String!, $namespace: String!) {
+  addTransaction(path: $path, birthtime: $birthtime, repoFolder: $repoFolder, namespace: $namespace) {
     _id
     status
     path
     birthtime
+    namespace
   }
 }

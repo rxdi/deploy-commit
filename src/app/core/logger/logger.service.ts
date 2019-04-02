@@ -7,11 +7,11 @@ const Table = require("cli-table");
 export class LoggerService {
   showTransactionLog(t: ITransactionType[]) {
     const table = new Table({
-      head: ["Transaction ID", "Status", "Path"],
-      colWidths: [20, 20, 80]
+      head: ["Transaction ID", "Status", "Path", "Message"],
+      colWidths: [20, 20, 20, 80]
     });
     table.push(
-      ...t.map(t => [t._id, t.status ? t.status : "UNKNOWN", t.path || ""])
+      ...t.map(t => [t._id, t.status ? t.status : "UNKNOWN", t.path || "", t.message || ""])
     );
     console.log("");
     console.log(table.toString());
@@ -19,7 +19,7 @@ export class LoggerService {
 There are {green.bold ${
       t.filter(t => t.status === "DEPLOYED").length
     } deployed} transactions.
-There are {red.bold ${t.filter(t => t.status !== "DEPLOYED").length} uncommited} transactions.
+There are {red.bold ${t.filter(t => t.status !== "DEPLOYED").length} undeployed} transactions.
         `);
   }
 }

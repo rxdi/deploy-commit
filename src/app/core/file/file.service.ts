@@ -12,7 +12,7 @@ export class FileService {
   results: string[] = [];
 
   private read(name: "package.json" | "reactive.json") {
-    let file: string;
+    let file: string = "{}";
     try {
       file = readFileSync(`${process.cwd()}/${name}`, {
         encoding: "utf-8"
@@ -87,7 +87,7 @@ export class FileService {
   }
 
   async map(res): Promise<IFolderStructureType[]> {
-    let foldersCount = 100;
+    const foldersCount = 100;
     let counter = 0;
     return (await Promise.all<IFolderStructureType>(
       res.map(async r => {

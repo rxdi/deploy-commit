@@ -4,6 +4,9 @@ export declare const REACTIVE_JSON: InjectionToken<string>;
 export declare const PACKAGE_JSON: InjectionToken<string>;
 export interface REACTIVE_JSON {
     main: string;
+    name: string;
+}
+export interface PACKAGE_JSON extends REACTIVE_JSON {
 }
 export declare type COMMAND_PARSER = string[];
 export declare enum COMMANDS {
@@ -14,4 +17,4 @@ export declare enum COMMANDS {
     commit = "commit",
     push = "push"
 }
-export declare type MAIN_COMMANDS = "--status" | "--help" | "";
+export declare type MAIN_COMMANDS = "--status" | "--help" | " ";

@@ -6,5 +6,6 @@ mutation commitTransaction($message: String!, $repoFolder: String!) {
     path
     repoFolder
     message
+    namespace
   }
 }
