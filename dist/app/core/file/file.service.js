@@ -22,26 +22,26 @@ const path_1 = require("path");
 const rxjs_1 = require("rxjs");
 let FileService = class FileService {
     constructor() {
-        this.units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        this.units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         this.results = [];
     }
     read(name) {
         let file;
         try {
             file = fs_1.readFileSync(`${process.cwd()}/${name}`, {
-                encoding: 'utf-8'
+                encoding: "utf-8"
             });
         }
         catch (e) { }
-        return file;
+        return JSON.parse(file);
     }
     readReactiveJson() {
-        return this.read('reactive.json');
+        return this.read("reactive.json");
     }
     readPackageJson() {
-        return this.read('package.json');
+        return this.read("package.json");
     }
-    wholeReadDirRecursive(path = '.') {
+    wholeReadDirRecursive(path = ".") {
         return __awaiter(this, void 0, void 0, function* () {
             const directory = yield this.readDir(path);
             const pathinternal = path;
@@ -50,7 +50,7 @@ let FileService = class FileService {
                 const path = path_1.resolve(pathinternal, file);
                 const stat = yield this.statAsync(path);
                 if (stat && stat.isDirectory()) {
-                    if (!file.includes('node_modules')) {
+                    if (!file.includes("node_modules")) {
                         yield self.wholeReadDirRecursive.bind(this)(path);
                     }
                     else {
@@ -63,7 +63,7 @@ let FileService = class FileService {
             })))).filter(a => !!a);
         });
     }
-    readCurrentDirFlat(path = '.') {
+    readCurrentDirFlat(path = ".") {
         return __awaiter(this, void 0, void 0, function* () {
             return (yield this.readDir(path))
                 .map(file => path_1.resolve(path, file))
@@ -71,8 +71,7 @@ let FileService = class FileService {
         });
     }
     listFolder(folder) {
-        return rxjs_1.from(this.readCurrentDirFlat(folder))
-            .pipe(operators_1.switchMap(res => this.map(res)));
+        return rxjs_1.from(this.readCurrentDirFlat(folder)).pipe(operators_1.switchMap(res => this.map(res)));
     }
     readDir(folder, limit = 200) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -105,16 +104,10 @@ let FileService = class FileService {
             let counter = 0;
             return (yield Promise.all(res.map((r) => __awaiter(this, void 0, void 0, function* () {
                 counter++;
-                const mapping = {
-                    path: r,
-                    directory: null,
-                    file: null,
-                    name: null,
-                    status: null
-                };
+                const mapping = { path: r };
                 const status = yield this.statAsync(r);
-                const pathMapping = v => r.replace(process.cwd(), v);
-                if (!status.isDirectory || (status && status['prototype'] === String)) {
+                const pathMapping = (v) => r.replace(process.cwd(), v);
+                if (!status.isDirectory || (status && status["prototype"] === String)) {
                     return null;
                 }
                 if (status.isDirectory()) {
@@ -123,8 +116,8 @@ let FileService = class FileService {
                 else {
                     mapping.file = true;
                 }
-                mapping.name = r.split('/').pop();
-                mapping.path = pathMapping('.');
+                mapping.name = r.split("/").pop();
+                mapping.path = pathMapping(".");
                 mapping.path = r;
                 mapping.status = status;
                 mapping.status.size = this.niceBytes(status.size);
@@ -139,7 +132,7 @@ let FileService = class FileService {
         let l = 0, n = parseInt(x, 10) || 0;
         while (n >= 1024 && ++l)
             n = n / 1024;
-        return n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + this.units[l];
+        return n.toFixed(n >= 10 || l < 1 ? 0 : 1) + " " + this.units[l];
     }
     statAsync(path) {
         return __awaiter(this, void 0, void 0, function* () {

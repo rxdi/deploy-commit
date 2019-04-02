@@ -156,6 +156,7 @@ export
     birthtime: string | null;
     path: string | null;
     repoFolder: string | null;
+    message: string | null;
 }
 
   
@@ -173,6 +174,8 @@ export
     triggerBuild: IBuildType | null;
     addTransaction: ITransactionType | null;
     checkoutTransaction: ITransactionType | null;
+    commitTransaction: ITransactionType | null;
+    pushTransactionMutation: ITransactionType | null;
 }
 
   

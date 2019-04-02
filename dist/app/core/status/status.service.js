@@ -5,17 +5,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@rxdi/core");
-const rxjs_1 = require("rxjs");
-const graphql_request_1 = require("graphql-request");
-let RequestService = class RequestService {
-    request(query, variables = {}) {
-        return rxjs_1.from(graphql_request_1.default('http://localhost:9000/graphql', query, variables));
+const graph_service_1 = require("../graph/graph.service");
+let StatusService = class StatusService {
+    constructor(graphService) {
+        this.graphService = graphService;
+    }
+    requestStatus() {
+        return this.graphService.request("statusQuery.graphql");
     }
 };
-RequestService = __decorate([
-    core_1.Injectable()
-], RequestService);
-exports.RequestService = RequestService;
-//# sourceMappingURL=request.service.js.map
+StatusService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [graph_service_1.GraphService])
+], StatusService);
+exports.StatusService = StatusService;
+//# sourceMappingURL=status.service.js.map

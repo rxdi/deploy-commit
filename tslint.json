@@ -14,11 +14,7 @@
             "check-whitespace"
         ],
         "no-var-keyword": true,
-        "quotemark": [
-            true,
-            "single",
-            "avoid-escape"
-        ],
+        "quotemark": [true, "double", "avoid-escape"],
         "semicolon": [
             true,
             "always",

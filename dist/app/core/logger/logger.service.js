@@ -15,12 +15,12 @@ let LoggerService = class LoggerService {
             head: ["Transaction ID", "Status", "Path"],
             colWidths: [20, 20, 80]
         });
-        table.push(...t.map(t => [t._id, t.status ? t.status : "UNKNOWN", t.path || '']));
-        console.log('');
+        table.push(...t.map(t => [t._id, t.status ? t.status : "UNKNOWN", t.path || ""]));
+        console.log("");
         console.log(table.toString());
         console.log(chalk `
-    There are {green.bold ${t.filter(t => t.status === 'DEPLOYED').length} deployed} transactions.
-    There are {red.bold ${t.length} uncommited} transactions.
+There are {green.bold ${t.filter(t => t.status === "DEPLOYED").length} deployed} transactions.
+There are {red.bold ${t.filter(t => t.status !== "DEPLOYED").length} uncommited} transactions.
         `);
     }
 };

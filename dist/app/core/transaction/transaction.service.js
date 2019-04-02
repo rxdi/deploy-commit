@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -18,138 +21,178 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@rxdi/core");
-const request_service_1 = require("../request/request.service");
+const graph_service_1 = require("../graph/graph.service");
 const helpers_1 = require("../helpers");
 const logger_service_1 = require("../logger/logger.service");
 const spinner_service_1 = require("../spinner/spinner.service");
 const operators_1 = require("rxjs/operators");
 const file_service_1 = require("../file/file.service");
+const app_injection_1 = require("../../app.injection");
 let TransactionService = class TransactionService {
-    constructor(requestService, tLogger, spinner, fileService) {
-        this.requestService = requestService;
+    constructor(graphService, tLogger, spinner, fileService, reactiveJson, command) {
+        this.graphService = graphService;
         this.tLogger = tLogger;
         this.spinner = spinner;
         this.fileService = fileService;
-    }
-    scan() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const path = process.argv.slice(3);
-            const res = yield this.fileService.listFolder(path[0]).toPromise();
-            console.log('');
-            console.log('Files: ', res.filter(f => f.file).length);
-            console.log('Folders: ', res.filter(f => f.directory).length);
-            return this.fileService.results;
-        });
-    }
-    addTransaction() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const path = process.argv.slice(3);
-            this.spinner.start(`Adding ${path} to transaction...`);
-            const file = yield this.fileService.statAsync(path[0]);
-            if (!file.isDirectory || (file && file['prototype'] === String)) {
-                throw new Error('Not a file!');
-            }
-            if (file.isDirectory()) {
-                throw new Error('this is directory!');
-            }
-            let error = '';
-            let res;
+        this.reactiveJson = reactiveJson;
+        this.command = command;
+        this.addTransaction = () => __awaiter(this, void 0, void 0, function* () {
+            this.spinner.start(`Adding ${this.path} to transaction...`);
+            let file;
+            let error = "";
             try {
-                res = yield this.requestService
-                    .request(`
-          mutation addTransaction($path: String!, $birthtime: String!) {
-            addTransaction(path:$path, birthtime:$birthtime) {
-              _id
-              status
-              path
-              birthtime
+                file = yield this.isDirectory(this.path);
             }
-          }
-          `, {
+            catch (e) {
+                error = e;
+            }
+            if (error) {
+                this.spinner.stopAndPersist("🛎️", ` ${this.path} is directory! Please specify file instead`);
+                return null;
+            }
+            let res = {};
+            try {
+                res = yield this.graphService
+                    .request("addTransactionMutation.graphql", {
                     birthtime: file.birthtime.toISOString(),
-                    path: process.cwd() + '/' + path[0].replace(/^.*[\\\/]/, '')
+                    path: this.path,
+                    repoFolder: process.cwd()
                 })
-                    .pipe(operators_1.map(res => {
-                    return res.addTransaction;
-                }))
+                    .pipe(operators_1.map(res => res.addTransaction))
                     .toPromise();
             }
             catch (e) {
                 error = e.response.errors[0].message;
             }
-            this.spinner.stop('✎', error || `Transaction ${res._id} created for file: ${res.path}`);
+            this.spinner.stopAndPersist(error ? "🛎️" : "✎", error || `Transaction ${res._id} created for file: ${res.path}`);
             return res;
         });
-    }
-    checkoutTransaction() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const path = process.argv.slice(3);
-            const file = yield this.fileService.statAsync(path[0]);
-            if (!file.isDirectory || (file && file['prototype'] === String)) {
-                throw new Error('Not a file!');
+        this.checkoutTransaction = () => __awaiter(this, void 0, void 0, function* () {
+            let error = "";
+            try {
+                yield this.isDirectory(this.path);
             }
-            if (file.isDirectory()) {
-                throw new Error('this is directory!');
+            catch (e) {
+                error = e;
             }
-            let error = '';
+            if (error) {
+                this.spinner.stopAndPersist("🛎️", ` ${this.path} is directory! Please specify file instead`);
+                return null;
+            }
             let res;
             try {
-                this.spinner.start('');
-                res = yield this.requestService
-                    .request(`
-          mutation checkoutTransaction($path: String!) {
-            checkoutTransaction(path: $path) {
-              _id
-              status
-              birthtime
-              path
-            }
-          }
-          `, {
-                    path: process.cwd() + '/' + path[0].replace(/^.*[\\\/]/, '')
+                this.spinner.start("Commiting transaction...");
+                res = yield this.graphService
+                    .request("checkoutTransactionMutation.graphql", {
+                    repoFolder: process.cwd(),
+                    birthtime: null,
+                    path: this.path
                 })
-                    .pipe(operators_1.map(res => {
-                    return res.addTransaction;
-                }))
+                    .pipe(operators_1.map(res => res.checkoutTransaction))
                     .toPromise();
             }
             catch (e) {
-                error = e.response.errors[0].message;
+                if (e && e.response && e.response.errors.length) {
+                    error = e.response.errors[0].message;
+                }
             }
-            this.spinner.stop('✎', error || `Transaction removed: ${path[0]}`);
+            this.spinner.stopAndPersist(error ? "🛎️" : "✎", error || `Transaction removed: ${this.path}`);
             return res;
         });
-    }
-    listTransactions() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const status = helpers_1.nextOrDefault('--status', 'UNKNOWN');
-            this.spinner.start(`Loading ${status} transactions...`);
-            return yield this.requestService
-                .request(`
-      query listTransactions($status:TransactionsTypeEnum) {
-        listTransactions(status: $status) {
-          _id
-          status
-          path
-        }
-      }
-      `, {
-                status
+        this.commitTransaction = () => __awaiter(this, void 0, void 0, function* () {
+            const message = process.argv.slice(3)[0];
+            if (!message) {
+                throw new Error("Missing commit message");
+            }
+            let error = "";
+            let res;
+            try {
+                this.spinner.start("");
+                res = yield this.graphService
+                    .request("commitTransactionMutation.graphql", {
+                    repoFolder: process.cwd(),
+                    message
+                })
+                    .pipe(operators_1.map(res => res.commitTransaction))
+                    .toPromise();
+            }
+            catch (e) {
+                console.log(e);
+                if (e && e.response && e.response.errors.length) {
+                    error = e.response.errors[0].message;
+                }
+            }
+            console.log(res);
+            this.spinner.stopAndPersist(error ? "🛎️" : "✎", error || `Transaction commited ${res._id} with message ${res.message}`);
+            return res;
+        });
+        this.pushTransactions = () => __awaiter(this, void 0, void 0, function* () {
+            let error = "";
+            let res;
+            try {
+                this.spinner.start("");
+                res = yield this.graphService
+                    .request("pushTransactionMutation.graphql", {
+                    repoFolder: process.cwd()
+                })
+                    .pipe(operators_1.map(res => res.commitTransaction))
+                    .toPromise();
+            }
+            catch (e) {
+                if (e && e.response && e.response.errors.length) {
+                    error = e.response.errors[0].message;
+                }
+            }
+            this.spinner.stopAndPersist(error ? "🛎️" : "✎", error ||
+                `Transaction pushed ${res._id} with message ${res.message} waiting for build to pass...`);
+            return res;
+        });
+        this.listTransactions = () => __awaiter(this, void 0, void 0, function* () {
+            const status = helpers_1.nextOrDefault("--status", "UNKNOWN");
+            this.spinner.start(`Loading transactions...`);
+            return yield this.graphService
+                .request("listTransactionsQuery.graphql", {
+                status,
+                repoFolder: process.cwd()
             })
                 .pipe(operators_1.map(t => t.listTransactions), operators_1.tap(t => {
                 this.tLogger.showTransactionLog(t);
-                this.spinner.stop('✎', 'Transactions listed!');
+                this.spinner.stopAndPersist("✎", "Transactions listed!");
             }))
                 .toPromise();
+        });
+        this.path = this.reactiveJson.main || this.command[1];
+    }
+    scan() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.fileService.listFolder(this.path).toPromise();
+            console.log("");
+            console.log("Files: ", res.filter(f => f.file).length);
+            console.log("Folders: ", res.filter(f => f.directory).length);
+            return this.fileService.results;
+        });
+    }
+    isDirectory(path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const file = yield this.fileService.statAsync(path);
+            if (!file.isDirectory || (file && file.constructor.prototype === String)) {
+                throw new Error("Not a file!");
+            }
+            if (file.isDirectory()) {
+                throw new Error("This is directory! Please specify file instead!");
+            }
+            return file;
         });
     }
 };
 TransactionService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [request_service_1.RequestService,
+    __param(4, core_1.Inject(app_injection_1.REACTIVE_JSON)),
+    __param(5, core_1.Inject(app_injection_1.COMMAND_PARSER)),
+    __metadata("design:paramtypes", [graph_service_1.GraphService,
         logger_service_1.LoggerService,
         spinner_service_1.SpinnerService,
-        file_service_1.FileService])
+        file_service_1.FileService, Object, Array])
 ], TransactionService);
 exports.TransactionService = TransactionService;
 //# sourceMappingURL=transaction.service.js.map

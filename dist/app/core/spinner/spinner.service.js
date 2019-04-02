@@ -8,13 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@rxdi/core");
 const rxjs_1 = require("rxjs");
-const ora = require('ora');
+const ora = require("ora");
 let SpinnerService = class SpinnerService {
     start(text) {
-        return rxjs_1.of(this.spinner = ora(text).start());
+        return rxjs_1.of((this.spinner = ora(text).start()));
     }
-    stop(symbol = '✎', text = '') {
+    stop(symbol = "", text = "") {
         return rxjs_1.of(this.spinner.stopAndPersist({ symbol, text }));
+    }
+    stopAndPersist(symbol = "", text = "") {
+        return this.spinner.stopAndPersist({ symbol, text });
     }
 };
 SpinnerService = __decorate([

@@ -1,6 +1,8 @@
 /node_modules
 /build
+/coverage
 /proba
+test
 .cache
 .jsipfs
 .rxdi

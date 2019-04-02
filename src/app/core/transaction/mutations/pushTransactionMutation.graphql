@@ -1,0 +1,10 @@
+mutation pushTransactionMutation($repoFolder: String!) {
+  pushTransactionMutation(repoFolder: $repoFolder) {
+    _id
+    status
+    birthtime
+    path
+    repoFolder
+    message
+  }
+}

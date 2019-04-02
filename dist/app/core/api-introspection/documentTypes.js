@@ -6,5 +6,10 @@ function strEnum(o) {
         return res;
     }, Object.create(null));
 }
-exports.DocumentTypes = strEnum([]);
+exports.DocumentTypes = strEnum(['statusQuery.graphql',
+    'addTransactionMutation.graphql',
+    'checkoutTransactionMutation.graphql',
+    'commitTransactionMutation.graphql',
+    'pushTransactionMutation.graphql',
+    'listTransactionsQuery.graphql']);
 //# sourceMappingURL=documentTypes.js.map

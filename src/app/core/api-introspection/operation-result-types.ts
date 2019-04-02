@@ -8,6 +8,12 @@ export type TransactionsTypeEnum =
   "BUILD";
 
 
+export type statusQuery = {
+  status:  {
+    status: string | null,
+  } | null,
+};
+
 export type addTransactionMutationVariables = {
   path: string,
   birthtime: string,
@@ -34,6 +40,37 @@ export type checkoutTransactionMutation = {
     status: TransactionsTypeEnum | null,
     birthtime: string | null,
     path: string | null,
+  } | null,
+};
+
+export type commitTransactionMutationVariables = {
+  message: string,
+  repoFolder: string,
+};
+
+export type commitTransactionMutation = {
+  commitTransaction:  {
+    _id: string | null,
+    status: TransactionsTypeEnum | null,
+    birthtime: string | null,
+    path: string | null,
+    repoFolder: string | null,
+    message: string | null,
+  } | null,
+};
+
+export type pushTransactionMutationMutationVariables = {
+  repoFolder: string,
+};
+
+export type pushTransactionMutationMutation = {
+  pushTransactionMutation:  {
+    _id: string | null,
+    status: TransactionsTypeEnum | null,
+    birthtime: string | null,
+    path: string | null,
+    repoFolder: string | null,
+    message: string | null,
   } | null,
 };
 

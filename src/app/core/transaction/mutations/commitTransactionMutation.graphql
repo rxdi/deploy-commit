@@ -1,0 +1,10 @@
+mutation commitTransaction($message: String!, $repoFolder: String!) {
+  commitTransaction(message: $message, repoFolder: $repoFolder) {
+    _id
+    status
+    birthtime
+    path
+    repoFolder
+    message
+  }
+}

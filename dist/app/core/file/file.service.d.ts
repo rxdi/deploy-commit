@@ -1,10 +1,10 @@
-import { IFolderStructureType } from '../api-introspection';
+import { IFolderStructureType } from "../api-introspection";
 export declare class FileService {
     units: string[];
     results: string[];
     private read;
-    readReactiveJson(): string;
-    readPackageJson(): string;
+    readReactiveJson(): any;
+    readPackageJson(): any;
     wholeReadDirRecursive(path?: string): Promise<any[]>;
     readCurrentDirFlat(path?: string): Promise<string[]>;
     listFolder(folder: string): import("rxjs/internal/Observable").Observable<IFolderStructureType[]>;

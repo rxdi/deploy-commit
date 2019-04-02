@@ -117,6 +117,8 @@ export interface ITransactionType {
     status: ITransactionsTypeEnumEnum | null;
     birthtime: string | null;
     path: string | null;
+    repoFolder: string | null;
+    message: string | null;
 }
 export interface IUserType {
     __typename?: "UserType";
@@ -128,6 +130,8 @@ export interface IMutation {
     triggerBuild: IBuildType | null;
     addTransaction: ITransactionType | null;
     checkoutTransaction: ITransactionType | null;
+    commitTransaction: ITransactionType | null;
+    pushTransactionMutation: ITransactionType | null;
 }
 export interface IBuildType {
     __typename?: "BuildType";

@@ -1,35 +1,35 @@
-import { Injectable } from '@rxdi/core';
-import { readFileSync } from 'fs';
-import { switchMap } from 'rxjs/operators';
-import { stat, readdir } from 'fs';
-import { resolve } from 'path';
-import { from } from 'rxjs';
-import { IFolderStructureType, IFileStatusType } from '../api-introspection';
+import { Injectable } from "@rxdi/core";
+import { readFileSync } from "fs";
+import { switchMap } from "rxjs/operators";
+import { stat, readdir } from "fs";
+import { resolve } from "path";
+import { from } from "rxjs";
+import { IFolderStructureType, IFileStatusType } from "../api-introspection";
 
 @Injectable()
 export class FileService {
-  units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
   results: string[] = [];
 
-  private read(name: 'package.json' | 'reactive.json') {
+  private read(name: "package.json" | "reactive.json") {
     let file: string;
     try {
       file = readFileSync(`${process.cwd()}/${name}`, {
-        encoding: 'utf-8'
+        encoding: "utf-8"
       });
     } catch (e) {}
-    return file;
+    return JSON.parse(file);
   }
 
   readReactiveJson() {
-    return this.read('reactive.json');
+    return this.read("reactive.json");
   }
 
   readPackageJson() {
-    return this.read('package.json');
+    return this.read("package.json");
   }
 
-  async wholeReadDirRecursive(path: string = '.') {
+  async wholeReadDirRecursive(path: string = ".") {
     const directory = await this.readDir(path);
     const pathinternal = path;
     const self = this;
@@ -38,7 +38,7 @@ export class FileService {
         const path = resolve(pathinternal, file);
         const stat = await this.statAsync(path);
         if (stat && stat.isDirectory()) {
-          if (!file.includes('node_modules')) {
+          if (!file.includes("node_modules")) {
             await self.wholeReadDirRecursive.bind(this)(path);
           } else {
             return null;
@@ -50,15 +50,16 @@ export class FileService {
     )).filter(a => !!a);
   }
 
-  async readCurrentDirFlat(path: string = '.') {
+  async readCurrentDirFlat(path: string = ".") {
     return (await this.readDir(path))
       .map(file => resolve(path, file))
       .filter(a => !!a);
   }
 
   listFolder(folder: string) {
-    return from(this.readCurrentDirFlat(folder))
-    .pipe(switchMap(res => this.map(res)))
+    return from(this.readCurrentDirFlat(folder)).pipe(
+      switchMap(res => this.map(res))
+    );
   }
 
   async readDir(folder: string, limit: number = 200) {
@@ -91,17 +92,11 @@ export class FileService {
     return (await Promise.all<IFolderStructureType>(
       res.map(async r => {
         counter++;
-        const mapping: IFolderStructureType = {
-          path: r,
-          directory: null,
-          file: null,
-          name: null,
-          status: null
-        };
+        const mapping: IFolderStructureType = { path: r } as any;
         const status = await this.statAsync(r);
-        const pathMapping = v => r.replace(process.cwd(), v);
+        const pathMapping = (v: string) => r.replace(process.cwd(), v);
 
-        if (!status.isDirectory || (status && status['prototype'] === String)) {
+        if (!status.isDirectory || (status && status["prototype"] === String)) {
           return null;
         }
         if (status.isDirectory()) {
@@ -109,8 +104,8 @@ export class FileService {
         } else {
           mapping.file = true;
         }
-        mapping.name = r.split('/').pop();
-        mapping.path = pathMapping('.');
+        mapping.name = r.split("/").pop();
+        mapping.path = pathMapping(".");
 
         mapping.path = r;
 
@@ -128,7 +123,7 @@ export class FileService {
     let l = 0,
       n = parseInt(x, 10) || 0;
     while (n >= 1024 && ++l) n = n / 1024;
-    return n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + this.units[l];
+    return n.toFixed(n >= 10 || l < 1 ? 0 : 1) + " " + this.units[l];
   }
 
   async statAsync(path: string): Promise<any> {
