@@ -1,9 +1,9 @@
-import { MAIN_COMMANDS } from "app/app.injection";
+import { MAIN_ARGUMENTS } from "app/app.injection";
 
-export const includes = (i: MAIN_COMMANDS) =>
+export const includes = (i: MAIN_ARGUMENTS) =>
   process.argv.toString().includes(i);
 export const nextOrDefault = (
-  i: MAIN_COMMANDS,
+  i: MAIN_ARGUMENTS,
   fb: any = true,
   type = p => p
 ) => {

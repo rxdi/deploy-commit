@@ -3,12 +3,13 @@ import { COMMANDS } from "../../app.injection";
 import { TransactionService } from "../transaction/transaction.service";
 import { ITransactionType, IStatusQueryType } from "../api-introspection";
 import { StatusService } from "../status/status.service";
+import { InstallService } from "../tasks/install/install.service";
 
 @Injectable()
 export class ExecutorService {
-  taskMap = new Map<
+  taskMapServer = new Map<
     COMMANDS,
-    () => Promise<ITransactionType | ITransactionType[]>
+    () => Promise<ITransactionType | ITransactionType[] | {}>
   >([
     [COMMANDS.add, this.transactionService.addTransaction],
     [COMMANDS.checkout, this.transactionService.checkoutTransaction],
@@ -17,14 +18,26 @@ export class ExecutorService {
     [COMMANDS.push, this.transactionService.pushTransactions]
   ]);
 
+  taskMapClient = new Map<
+    COMMANDS,
+    () => Promise<ITransactionType | ITransactionType[] | {}>
+  >([
+    [COMMANDS.install, this.installService.install],
+    [COMMANDS.i, this.installService.install]
+  ]);
+
   constructor(
     private transactionService: TransactionService,
-    private statusService: StatusService
+    private statusService: StatusService,
+    private installService: InstallService
   ) {}
 
   async execute(command: COMMANDS) {
-    if (this.taskMap.has(command) && await this.isServerStarted()) {
-      return await this.taskMap.get(command)();
+    if (this.taskMapClient.has(command)) {
+      return await this.taskMapClient.get(command)();
+    }
+    if (this.taskMapServer.has(command) && (await this.isServerStarted())) {
+      return await this.taskMapServer.get(command)();
     }
     return null;
   }

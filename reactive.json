@@ -1,4 +1,38 @@
 {
-    "name": "@rxdi/deploy-commit",
-    "main": "./src/main.ts"
+  "name": "@rxdi/deploy-commit",
+  "main": "./src/main.ts",
+  "packages": [
+    {
+      "name": "@rxdi/core",
+      "version": "^0.2.7"
+    },
+    {
+      "name": "chalk",
+      "version": "^2.4.2"
+    },
+    {
+      "name": "cli-table",
+      "version": "^0.3.1"
+    },
+    {
+      "name": "graphql",
+      "version": "^14.2.1"
+    },
+    {
+      "name": "graphql-request",
+      "version": "^1.8.2"
+    },
+    {
+      "name": "ora",
+      "version": "^3.2.0"
+    }
+  ],
+  "ipfs": [
+    {
+      "provider": "https://ipfs.io/ipfs/",
+      "dependencies": [
+        "QmbrwcffVB3y8iUVvifynhSYfv1LCHX1ETVi8Q8pmqSJsH"
+      ]
+    }
+  ]
 }

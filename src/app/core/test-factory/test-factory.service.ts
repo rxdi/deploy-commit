@@ -1,18 +1,22 @@
-import { Injectable } from "@rxdi/core";
-import { COMMAND_PARSER, REACTIVE_JSON } from "../../app.injection";
-export const createFakeInjectable = () => [
-  {
-    provide: COMMAND_PARSER,
-    useValue: {}
-  },
+import { Injectable  } from "@rxdi/core";
+import { REACTIVE_JSON, PACKAGE_JSON, COMMAND_PARSER } from "../../app.injection";
+export const createFakeInjectables = () => [
   {
     provide: REACTIVE_JSON,
-    useValue: {}
-  }
+    useFactory: () => ({})
+  },
+  {
+    provide: PACKAGE_JSON,
+    useFactory: () => ({})
+  },
+  {
+    provide: COMMAND_PARSER,
+    useFactory: () => process.argv.slice(2)
+  },
 ];
 @Injectable()
 export class TestFactoryService {
-  createFakeInjectable() {
-      return createFakeInjectable();
+  createFakeInjectables() {
+      return createFakeInjectables();
   }
 }

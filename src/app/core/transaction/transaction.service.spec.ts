@@ -1,25 +1,14 @@
 import "jest";
 import { Container, createTestBed } from "@rxdi/core";
 import { TransactionService } from "./transaction.service";
-import { REACTIVE_JSON, COMMAND_PARSER } from "../../app.injection";
 import { ITransactionType } from "../api-introspection";
+import { createFakeInjectables } from "../test-factory/test-factory.service";
 
 describe("Transaction Service", () => {
   beforeAll(async () => {
     await createTestBed({
       imports: [],
-      providers: [
-        TransactionService,
-        {
-          provide: COMMAND_PARSER,
-          useValue: {}
-        },
-
-        {
-          provide: REACTIVE_JSON,
-          useValue: {}
-        }
-      ]
+      providers: [...createFakeInjectables(), TransactionService]
     }).toPromise();
   });
 
@@ -41,7 +30,12 @@ describe("Transaction Service", () => {
   });
 
   it("should add transaction", async () => {
-    const transaction = await addTransaction();
+    const transactionService = Container.get(TransactionService);
+    const spy = spyOn(transactionService, "addTransaction").and.callFake(() =>
+      addTransaction()
+    );
+    const transaction = await transactionService.addTransaction();
+    expect(spy).toHaveBeenCalled();
     expect(transaction._id).toBeDefined();
     expect(transaction.birthtime).toBeDefined();
     expect(transaction.message).toBeDefined();

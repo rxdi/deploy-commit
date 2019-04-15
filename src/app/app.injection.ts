@@ -28,6 +28,9 @@ export enum COMMANDS {
   scan = "scan",
   checkout = "checkout",
   commit = "commit",
-  push = "push"
+  push = "push",
+  install = "install",
+  i = "i"
 }
-export type MAIN_COMMANDS = "--status" | "--help" | " ";
+
+export type MAIN_ARGUMENTS = "--status" | "--help" | "--local-node" | "--cloudflare" | "--infura" | "--ipfs";

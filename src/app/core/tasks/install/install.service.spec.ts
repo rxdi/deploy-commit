@@ -1,8 +1,8 @@
-import 'jest';
-import { Container, createTestBed } from '@gapi/core';
-import { InstallService } from './install.service';
+import "jest";
+import { Container, createTestBed } from "@rxdi/core";
+import { InstallService } from "./install.service";
 
-describe('Install Service', () => {
+describe("Install Service", () => {
   beforeAll(async () => {
     await createTestBed({
       imports: [],
@@ -10,7 +10,7 @@ describe('Install Service', () => {
     }).toPromise();
   });
 
-  it('should be defined', done => {
+  it("should be defined", done => {
     expect(Container.has(InstallService)).toBeTruthy();
     done();
   });

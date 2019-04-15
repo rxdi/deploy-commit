@@ -4,8 +4,7 @@ import {
   Container,
   ExternalImporter,
   FileService,
-  ExternalImporterIpfsConfig,
-  ConfigService
+  ExternalImporterIpfsConfig
 } from "@rxdi/core";
 import { Observable, combineLatest } from "rxjs";
 import { includes } from "../../helpers";
@@ -41,11 +40,9 @@ export const DownloadDependencies = (
 export class InstallService {
   constructor(
     private externalImporter: ExternalImporter,
-    private fileService: FileService,
-    private externalImporterConfig: ExternalImporterIpfsConfig,
-    private configService: ConfigService
+    private fileService: FileService
   ) {}
-  run() {
+  install = () => {
     let p = null;
     if (includes("--local-node")) {
       p = this.externalImporter.getProvider("local");
@@ -132,12 +129,10 @@ export class InstallService {
         })
       ];
     }
-    combineLatest(modulesToDownload)
-      .pipe(
-        tap(() => (hash ? this.externalImporter.addPackageToJson(hash) : null)),
-        tap(() => this.externalImporter.filterUniquePackages())
-      )
-      .subscribe(
+    return combineLatest(modulesToDownload).pipe(
+      tap(() => (hash ? this.externalImporter.addPackageToJson(hash) : null)),
+      tap(() => this.externalImporter.filterUniquePackages()),
+      tap(
         res => {
           console.log(
             "Default ipfs provider: ",
@@ -157,6 +152,7 @@ export class InstallService {
         e => {
           throw new Error(e);
         }
-      );
-  }
+      )
+    ).toPromise();
+  };
 }
