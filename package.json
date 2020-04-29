@@ -1,10 +1,9 @@
 {
   "name": "@rxdi/deploy-commit",
-  "version": "0.7.45",
+  "version": "0.7.46",
   "description": "Package prepared to commit easy decentralized rxdi package",
   "main": "index.js",
   "scripts": {
-    "postpublish": "git push -f ssh://git@gitlab.youvolio.com:522/rxdi/deploy-commit.git && git push --tags && git push ssh://git@gitlab.youvolio.com:522/rxdi/deploy-commit.git --tags",
     "build": "gapi build",
     "generate:schema": "gapi schema introspect --collect-documents --collect-types && npm run generate:tschema && npm run generate:rawQuery",
     "generate:rawQuery": "./node_modules/.bin/graphql-document-collector './src/**/*.graphql' > ./src/app/core/api-introspection/documents.json",
